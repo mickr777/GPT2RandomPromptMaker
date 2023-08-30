@@ -1,12 +1,13 @@
 import torch
 from typing import Literal, Optional
-from pydantic import Field
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from invokeai.app.invocations.baseinvocation import (
     BaseInvocation,
     InvocationContext,
     tags,
     title,
+    UIComponent,
+    InputField,
 )
 from invokeai.app.invocations.primitives import StringOutput
 
@@ -26,20 +27,27 @@ def is_model_cached(model_name: str) -> bool:
 class GPT2PromptInvocation(BaseInvocation):
     """Generates a random prompt using GPT-2"""
 
+    # Inputs
     type: Literal["gpt2_random_prompt_maker"] = "gpt2_random_prompt_maker"
-    seed: Optional[str] = Field(default="An enchanted", description="Seed for the prompt generation")
-    context: Optional[str] = Field(
+    seed: Optional[str] = InputField(
+        default="An enchanted", description="Seed for the prompt generation", ui_component=UIComponent.Textarea
+    )
+    context: Optional[str] = InputField(
         default="Describe a scene where",
         description="Context for the prompt generation",
+        ui_component=UIComponent.Textarea,
     )
-    max_length: Optional[int] = Field(default=100, description="Max length of the generated text")
-    temperature: Optional[float] = Field(default=0.7, description="Controls the randomness of predictions")
-    repetition_penalty: Optional[float] = Field(
-        default=1.0, description="Penalty for repeated content in the generated text"
+    max_length: Optional[int] = InputField(default=100, description="Max length of the generated text")
+    temperature: Optional[float] = InputField(default=0.7, description="Controls the randomness of predictions")
+    repetition_penalty: Optional[float] = InputField(
+        default=1.0,
+        description="Penalty for repeated content in the generated text",
+        ge=1,
+        le=2,
     )
-    model_name: Optional[str] = Field(default="gpt2", description="Favorite pretrained model to use")
+    model_name: Optional[str] = InputField(default="gpt2", description="Favorite pretrained model to use")
     favorate_models: Optional[
-        Literal[ # add your favorite models here
+        Literal[  # add your favorite models here
             "",
             "Meli/GPT2-Prompt",
             "AUTOMATIC/promptgen-lexart",
@@ -47,7 +55,7 @@ class GPT2PromptInvocation(BaseInvocation):
             "succinctly/text2image-prompt-generator",
             "MBZUAI/LaMini-Neo-1.3B",
         ]
-    ] = None
+    ] = InputField()
 
     def is_sfw(self, text):
         banned_words = []  # add your banned words here eg. "nude", "murder"
