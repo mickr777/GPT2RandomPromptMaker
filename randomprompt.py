@@ -4,8 +4,7 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 from invokeai.app.invocations.baseinvocation import (
     BaseInvocation,
     InvocationContext,
-    tags,
-    title,
+    invocation,
     UIComponent,
     InputField,
 )
@@ -21,14 +20,11 @@ def is_model_cached(model_name: str) -> bool:
     except:
         return False
 
-
-@title("Random Prompt Maker Using GPT2")
-@tags("prompt", "gpt2", "image")
+@invocation("Random_Prompt_Maker_GPT2", title="Random Prompt Maker Using GPT2", tags=["prompt", "gpt2"], category="prompt")
 class GPT2PromptInvocation(BaseInvocation):
     """Generates a random prompt using GPT-2"""
 
     # Inputs
-    type: Literal["gpt2_random_prompt_maker"] = "gpt2_random_prompt_maker"
     seed: Optional[str] = InputField(
         default="An enchanted", description="Seed for the prompt generation", ui_component=UIComponent.Textarea
     )
