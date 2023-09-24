@@ -10,17 +10,7 @@ A node for InvokeAI utilizes the GPT-2 language model to generate random prompts
 | max_length | The maximum length of the generated text.|
 | temperature | Controls the randomness of predictions.|
 | repetition_penalty | Penalty for repeated content in the generated text.|
-| model_hf_name | Hugging Face gpt2 model name to use.|
-| local_model | List of the local models to use from the model_cache folder.|
-
-Tested Model Examples
-```
-Meli/GPT2-Prompt
-AUTOMATIC/promptgen-lexart
-Gustavosta/MagicPrompt-Stable-Diffusion
-succinctly/text2image-prompt-generator
-MBZUAI/LaMini-Neo-1.3B (needs more vram then other models)
-```
+| model_name | Hugging Face gpt2 model name to use.|
 
 #### Info:
 - on first use it should download the needed files.
