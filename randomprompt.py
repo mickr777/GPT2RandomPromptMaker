@@ -1,4 +1,4 @@
-import torch
+import torch, os
 from typing import Literal, Optional
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from invokeai.app.invocations.baseinvocation import (
@@ -10,17 +10,19 @@ from invokeai.app.invocations.baseinvocation import (
 )
 from invokeai.app.invocations.primitives import StringOutput
 
+CACHE_DIR = "model_cache"
+os.makedirs(CACHE_DIR, exist_ok=True)
 
 def is_model_cached(model_name: str) -> bool:
-    """Check if the model and its tokenizer are cached locally."""
+    """Check if the model and its tokenizer are cached locally in a custom directory."""
     try:
-        AutoTokenizer.from_pretrained(model_name, local_files_only=True)
-        AutoModelForCausalLM.from_pretrained(model_name, local_files_only=True)
+        AutoTokenizer.from_pretrained(model_name, local_files_only=True, cache_dir=CACHE_DIR)
+        AutoModelForCausalLM.from_pretrained(model_name, local_files_only=True, cache_dir=CACHE_DIR)
         return True
     except:
         return False
 
-@invocation("Random_Prompt_Maker_GPT2", title="Random Prompt Maker Using GPT2", tags=["prompt", "gpt2"], category="prompt")
+@invocation("Random_Prompt_Maker_GPT2", title="Random Prompt Maker Using GPT2", tags=["prompt", "gpt2"], category="prompt", version="1.0.0")
 class GPT2PromptInvocation(BaseInvocation):
     """Generates a random prompt using GPT-2"""
 
@@ -71,9 +73,9 @@ class GPT2PromptInvocation(BaseInvocation):
         else:
             print(f"\033[1;32;40mUsing cached model:   \033[0m \033[1;37;40m{model_to_use}\033[0m")
 
-        tokenizer = AutoTokenizer.from_pretrained(model_to_use)
+        tokenizer = AutoTokenizer.from_pretrained(model_to_use, cache_dir=CACHE_DIR)
+        model = AutoModelForCausalLM.from_pretrained(model_to_use, cache_dir=CACHE_DIR)
         device = "cuda" if torch.cuda.is_available() else "cpu"
-        model = AutoModelForCausalLM.from_pretrained(model_to_use)
         model = model.to(device)
 
         if context is not None:
