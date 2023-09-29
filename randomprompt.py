@@ -20,7 +20,7 @@ def is_model_cached(model_name: str) -> bool:
     except:
         return False
 
-@invocation("Random_Prompt_Maker_GPT2", title="Random Prompt Maker Using GPT2", tags=["prompt", "gpt2"], category="prompt")
+@invocation("Random_Prompt_Maker_GPT2", title="Random Prompt Maker Using GPT2", tags=["prompt", "gpt2"], category="prompt", use_cache=False)
 class GPT2PromptInvocation(BaseInvocation):
     """Generates a random prompt using GPT-2"""
 
