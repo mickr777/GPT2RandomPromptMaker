@@ -1,0 +1,1 @@
+from .randomprompt import GPT2PromptInvocation
