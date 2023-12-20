@@ -11,16 +11,24 @@ from invokeai.app.invocations.baseinvocation import (
 from invokeai.app.invocations.primitives import StringOutput
 
 
-def is_model_cached(model_name: str) -> bool:
+def is_model_cached(tokenizer_model: str) -> bool:
     """Check if the model and its tokenizer are cached locally."""
     try:
-        AutoTokenizer.from_pretrained(model_name, local_files_only=True)
-        AutoModelForCausalLM.from_pretrained(model_name, local_files_only=True)
+        AutoTokenizer.from_pretrained(tokenizer_model, local_files_only=True)
+        AutoModelForCausalLM.from_pretrained(v, local_files_only=True)
         return True
     except:
         return False
 
-@invocation("Random_Prompt_Maker_GPT2", title="Random Prompt Maker Using GPT2", tags=["prompt", "gpt2"], category="prompt", use_cache=False)
+
+@invocation(
+    "Random_Prompt_Maker_GPT2",
+    title="Random Prompt Maker Using GPT2",
+    tags=["prompt", "gpt2"],
+    category="prompt",
+    version="1.3.5",
+    use_cache=False
+)
 class GPT2PromptInvocation(BaseInvocation):
     """Generates a random prompt using GPT-2"""
 
@@ -41,17 +49,15 @@ class GPT2PromptInvocation(BaseInvocation):
         ge=1,
         le=2,
     )
-    model_name: Optional[str] = InputField(default="gpt2", description="Favorite pretrained model to use")
-    favorate_models: Optional[
-        Literal[  # add your favorite models here
-            "",
-            "Meli/GPT2-Prompt",
-            "AUTOMATIC/promptgen-lexart",
-            "Gustavosta/MagicPrompt-Stable-Diffusion",
-            "succinctly/text2image-prompt-generator",
-            "MBZUAI/LaMini-Neo-1.3B",
-        ]
-    ] = InputField()
+    tokenizer_model: Optional[str] = InputField(default="gpt2", description="Favorite pretrained model to use")
+    favorate_models: Literal[  # add your favorite models here
+        "",
+        "Meli/GPT2-Prompt",
+        "AUTOMATIC/promptgen-lexart",
+        "Gustavosta/MagicPrompt-Stable-Diffusion",
+        "succinctly/text2image-prompt-generator",
+        "MBZUAI/LaMini-Neo-1.3B",
+    ] = InputField(default="")
 
     def is_sfw(self, text):
         banned_words = []  # add your banned words here eg. "nude", "murder"
@@ -61,7 +67,7 @@ class GPT2PromptInvocation(BaseInvocation):
         if trials > 5:
             return "\033[1;31mUnable to generate SFW prompt after 5 attempts.\033[0m"
 
-        model_to_use = self.model_name
+        model_to_use = self.tokenizer_model
 
         if self.favorate_models and self.favorate_models != "":
             model_to_use = self.favorate_models
